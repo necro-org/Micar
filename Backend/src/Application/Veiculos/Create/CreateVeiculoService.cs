@@ -30,7 +30,8 @@ public class CreateVeiculoService
             request.Apelido,
             request.TipoVeiculo,
             usuarioId,
-            request.DiasNotificacaoOdometro);
+            request.DiasNotificacaoOdometro,
+            request.Descricao);
 
         await _veiculoRepository.AddAsync(veiculo, ct);
 

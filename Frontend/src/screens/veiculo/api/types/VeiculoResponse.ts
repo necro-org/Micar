@@ -7,4 +7,5 @@ export interface VeiculoResponse {
   tipoVeiculo: TipoVeiculoEnum;
   odometroAtual: number | null;
   diasNotificacaoOdometro: number;
+  descricao: string | null;
 }

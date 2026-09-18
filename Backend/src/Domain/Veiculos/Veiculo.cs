@@ -16,6 +16,7 @@ public class Veiculo : Entity
     public ICollection<RegistroOdometro> RegistrosOdometro { get; private set; } = new List<RegistroOdometro>();
     public ICollection<Manutencao> Manutencoes { get; private set; } = new List<Manutencao>();
     public int DiasNotificacaoOdometro { get; private set; }
+    public string? Descricao { get; private set; }
 
     public RegistroOdometro? UltimoRegistroOdometro =>
         RegistrosOdometro.OrderByDescending(r => r.Data).ThenByDescending(r => r.Odometro).FirstOrDefault();
@@ -32,7 +33,8 @@ public class Veiculo : Entity
         string apelido,
         TipoVeiculoEnum tipoVeiculo,
         Guid usuarioId,
-        int diasNotificacaoOdometro)
+        int diasNotificacaoOdometro,
+        string? descricao)
     {
         if (usuarioId == Guid.Empty)
             throw new BadRequestException("Usuário é obrigatório.");
@@ -42,14 +44,21 @@ public class Veiculo : Entity
         TipoVeiculo = tipoVeiculo;
         UsuarioId = usuarioId;
         DiasNotificacaoOdometro = ValidarDiasNotificacaoOdometro(diasNotificacaoOdometro);
+        Descricao = descricao;
     }
 
-    public void Atualizar(string placa, string apelido, TipoVeiculoEnum tipoVeiculo, int diasNotificacaoOdometro)
+    public void Atualizar(
+        string placa,
+        string apelido,
+        TipoVeiculoEnum tipoVeiculo,
+        int diasNotificacaoOdometro,
+        string? descricao)
     {
         Placa = ValidarPlaca(placa);
         Apelido = ValidarApelido(apelido);
         TipoVeiculo = tipoVeiculo;
         DiasNotificacaoOdometro = ValidarDiasNotificacaoOdometro(diasNotificacaoOdometro);
+        Descricao = descricao;
     }
 
     public void AtualizarOdometroAtual(int odometro, DateOnly data)

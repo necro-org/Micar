@@ -34,7 +34,8 @@ public class UpdateVeiculoService
             request.Placa,
             request.Apelido,
             request.TipoVeiculo,
-            request.DiasNotificacaoOdometro);
+            request.DiasNotificacaoOdometro,
+            request.Descricao);
 
         if (request.Odometro.HasValue)
             veiculo.AtualizarOdometroAtual(request.Odometro.Value, DateOnly.FromDateTime(DateTime.UtcNow));

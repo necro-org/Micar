@@ -9,4 +9,5 @@ public class CreateVeiculoRequest
     public required TipoVeiculoEnum TipoVeiculo { get; set; }
     public int? Odometro { get; set; }
     public required int DiasNotificacaoOdometro { get; set; }
+    public string? Descricao { get; set; }
 }

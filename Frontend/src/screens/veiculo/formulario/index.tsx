@@ -42,6 +42,7 @@ const schema = z.object({
     .string()
     .trim()
     .min(1, "Informe os dias para notificação."),
+  descricao: z.string().trim().optional(),
 });
 
 type VeiculoFormValues = z.infer<typeof schema>;
@@ -69,12 +70,14 @@ export function VeiculoFormScreen() {
         tipoVeiculo: TipoVeiculoEnum.Carro,
         odometro: undefined,
         diasNotificacaoOdometro: String(DIAS_NOTIFICACAO_ODOMETRO_PADRAO),
+        descricao: "",
       },
     });
 
   const apelidoRef = useRef<TextInputNative>(null);
   const odometroRef = useRef<TextInputNative>(null);
   const diasNotificacaoOdometroRef = useRef<TextInputNative>(null);
+  const descricaoRef = useRef<TextInputNative>(null);
   const tipoVeiculo = watch("tipoVeiculo");
 
   useEffect(() => {
@@ -87,6 +90,7 @@ export function VeiculoFormScreen() {
           ? String(veiculo.odometroAtual)
           : undefined,
         diasNotificacaoOdometro: String(veiculo.diasNotificacaoOdometro),
+        descricao: veiculo.descricao ?? "",
       });
     }
   }, [veiculo, reset]);
@@ -98,6 +102,7 @@ export function VeiculoFormScreen() {
       tipoVeiculo: values.tipoVeiculo,
       odometro: values.odometro ? Number(values.odometro) : undefined,
       diasNotificacaoOdometro: Number(values.diasNotificacaoOdometro),
+      descricao: values.descricao || undefined,
     };
 
     if (isEditing) {
@@ -225,8 +230,26 @@ export function VeiculoFormScreen() {
               error={fieldState.error?.message}
               keyboardType="numeric"
               placeholder="30"
-              returnKeyType="done"
-              onSubmitEditing={handleSubmit(onSubmit)}
+              returnKeyType="next"
+              onSubmitEditing={() => descricaoRef.current?.focus()}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="descricao"
+          render={({ field, fieldState }) => (
+            <TextInput
+              ref={descricaoRef}
+              label="Descrição"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              placeholder="Opcional · observações sobre o veículo"
+              multiline
+              numberOfLines={4}
             />
           )}
         />
