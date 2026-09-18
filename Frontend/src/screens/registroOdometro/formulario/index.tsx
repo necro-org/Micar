@@ -2,18 +2,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRoute, type RouteProp } from "@react-navigation/native";
 import { useEffect, useMemo, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Pressable, Text, View } from "react-native";
 import { z } from "zod";
 
 import { Button } from "@/components/Button";
+import { KeyboardAvoidingFormScreen } from "@/components/KeyboardAvoidingFormScreen";
 import { TextInput } from "@/components/TextInput";
 import { useAppGoTo } from "@/hooks/useAppGoTo";
 import type { AppStackParamList } from "@/navigation/types";
@@ -96,107 +89,97 @@ export function RegistroOdometroFormScreen() {
   }
 
   return (
-    <SafeAreaView edges={["top", "left", "right"]} className="flex-1 bg-brand-50">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        className="flex-1"
-      >
-        <ScrollView
-          contentContainerClassName="flex-1 justify-center px-6"
-          keyboardShouldPersistTaps="handled"
-        >
-          <View className="mb-6 items-center">
-            <Text className="text-3xl font-bold text-brand-900">
-              Registrar odômetro
-            </Text>
-            {veiculo && (
-              <Text className="mt-1 text-base text-brand-500">
-                {veiculo.apelido} · {veiculo.placa}
-              </Text>
-            )}
-          </View>
+    <KeyboardAvoidingFormScreen edges={["top", "left", "right"]}>
+      <View className="mb-6 items-center">
+        <Text className="text-3xl font-bold text-brand-900">
+          Registrar odômetro
+        </Text>
+        {veiculo && (
+          <Text className="mt-1 text-base text-brand-500">
+            {veiculo.apelido} · {veiculo.placa}
+          </Text>
+        )}
+      </View>
 
-          {veiculo?.odometroAtual != null && (
-            <View className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
-              <Text className="text-sm text-brand-500">
-                Último odômetro registrado
-              </Text>
-              <Text className="text-lg font-semibold text-brand-900">
-                {veiculo.odometroAtual} km
-              </Text>
-            </View>
+      {veiculo?.odometroAtual != null && (
+        <View className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
+          <Text className="text-sm text-brand-500">
+            Último odômetro registrado
+          </Text>
+          <Text className="text-lg font-semibold text-brand-900">
+            {veiculo.odometroAtual} km
+          </Text>
+        </View>
+      )}
+
+      <View className="rounded-2xl bg-white p-6 shadow-sm">
+        <Controller
+          control={control}
+          name="odometro"
+          render={({ field, fieldState }) => (
+            <TextInput
+              label="Odômetro (km)"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              keyboardType="numeric"
+              placeholder="Ex: 12345"
+              autoFocus
+              returnKeyType="done"
+              onSubmitEditing={handleSubmit(onSubmit)}
+            />
           )}
+        />
 
-          <View className="rounded-2xl bg-white p-6 shadow-sm">
-            <Controller
-              control={control}
-              name="odometro"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  label="Odômetro (km)"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  keyboardType="numeric"
-                  placeholder="Ex: 12345"
-                  autoFocus
-                  returnKeyType="done"
-                  onSubmitEditing={handleSubmit(onSubmit)}
-                />
-              )}
-            />
-
-            <Text className="mb-2 text-sm font-medium text-brand-900">
-              Adicionar quilometragem
-            </Text>
-            <View className="mb-4 flex-row gap-3">
-              {INCREMENTOS_RAPIDOS.map((incremento) => (
-                <Pressable
-                  key={incremento}
-                  onPress={() => handleAjustar(incremento)}
-                  className="flex-1 items-center rounded-xl bg-accent-500 py-4 active:bg-accent-600"
-                >
-                  <Text className="text-base font-bold text-white">
-                    +{incremento / 1000}mil
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-
-            <Text className="mb-2 text-sm font-medium text-brand-900">
-              Ajuste fino
-            </Text>
-            <View className="mb-4 flex-row items-center justify-center gap-6">
-              <Pressable
-                onPress={() => handleAjustar(-PASSO_AJUSTE_FINO)}
-                className="h-16 w-16 items-center justify-center rounded-full bg-brand-100 active:bg-brand-200"
-              >
-                <Text className="text-3xl font-bold text-brand-600">−</Text>
-              </Pressable>
-
-              <Text className="min-w-[64px] text-center text-sm text-brand-500">
-                {PASSO_AJUSTE_FINO} km
+        <Text className="mb-2 text-sm font-medium text-brand-900">
+          Adicionar quilometragem
+        </Text>
+        <View className="mb-4 flex-row gap-3">
+          {INCREMENTOS_RAPIDOS.map((incremento) => (
+            <Pressable
+              key={incremento}
+              onPress={() => handleAjustar(incremento)}
+              className="flex-1 items-center rounded-xl bg-accent-500 py-4 active:bg-accent-600"
+            >
+              <Text className="text-base font-bold text-white">
+                +{incremento / 1000}mil
               </Text>
+            </Pressable>
+          ))}
+        </View>
 
-              <Pressable
-                onPress={() => handleAjustar(PASSO_AJUSTE_FINO)}
-                className="h-16 w-16 items-center justify-center rounded-full bg-brand-100 active:bg-brand-200"
-              >
-                <Text className="text-3xl font-bold text-brand-600">+</Text>
-              </Pressable>
-            </View>
+        <Text className="mb-2 text-sm font-medium text-brand-900">
+          Ajuste fino
+        </Text>
+        <View className="mb-4 flex-row items-center justify-center gap-6">
+          <Pressable
+            onPress={() => handleAjustar(-PASSO_AJUSTE_FINO)}
+            className="h-16 w-16 items-center justify-center rounded-full bg-brand-100 active:bg-brand-200"
+          >
+            <Text className="text-3xl font-bold text-brand-600">−</Text>
+          </Pressable>
 
-            <Button
-              label="Salvar registro"
-              onPress={handleSubmit(onSubmit)}
-              loading={isPending}
-            />
-          </View>
+          <Text className="min-w-[64px] text-center text-sm text-brand-500">
+            {PASSO_AJUSTE_FINO} km
+          </Text>
 
-          <Button label="Cancelar" onPress={goBack} variant="ghost" />
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          <Pressable
+            onPress={() => handleAjustar(PASSO_AJUSTE_FINO)}
+            className="h-16 w-16 items-center justify-center rounded-full bg-brand-100 active:bg-brand-200"
+          >
+            <Text className="text-3xl font-bold text-brand-600">+</Text>
+          </Pressable>
+        </View>
+
+        <Button
+          label="Salvar registro"
+          onPress={handleSubmit(onSubmit)}
+          loading={isPending}
+        />
+      </View>
+
+      <Button label="Cancelar" onPress={goBack} variant="ghost" />
+    </KeyboardAvoidingFormScreen>
   );
 }

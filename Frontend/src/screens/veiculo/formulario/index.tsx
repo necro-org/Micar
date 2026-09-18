@@ -5,10 +5,7 @@ import { useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
-  ScrollView,
   Text,
   TextInput as TextInputNative,
   View,
@@ -17,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { Button } from "@/components/Button";
+import { KeyboardAvoidingFormScreen } from "@/components/KeyboardAvoidingFormScreen";
 import { TextInput } from "@/components/TextInput";
 import { useAppGoTo } from "@/hooks/useAppGoTo";
 import type { AppStackParamList } from "@/navigation/types";
@@ -123,138 +121,124 @@ export function VeiculoFormScreen() {
   }
 
   return (
-    <SafeAreaView edges={["top", "left", "right"]} className="flex-1 bg-brand-50">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        className="flex-1"
-      >
-        <ScrollView
-          contentContainerClassName="flex-1 justify-center px-6"
-          keyboardShouldPersistTaps="handled"
-        >
-          <View className="mb-6 items-center">
-            <Text className="text-3xl font-bold text-brand-900">
-              {isEditing ? "Editar veículo" : "Novo veículo"}
-            </Text>
+    <KeyboardAvoidingFormScreen edges={["top", "left", "right"]}>
+      <View className="mb-6 items-center">
+        <Text className="text-3xl font-bold text-brand-900">
+          {isEditing ? "Editar veículo" : "Novo veículo"}
+        </Text>
+      </View>
+
+      <View className="rounded-2xl bg-white p-6 shadow-sm">
+        <Controller
+          control={control}
+          name="placa"
+          render={({ field, fieldState }) => (
+            <TextInput
+              label="Placa"
+              value={field.value}
+              onChangeText={(value) => field.onChange(value.toUpperCase())}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              autoCapitalize="characters"
+              maxLength={PLACA_LENGTH}
+              placeholder="ABC1D23"
+              returnKeyType="next"
+              onSubmitEditing={() => apelidoRef.current?.focus()}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="apelido"
+          render={({ field, fieldState }) => (
+            <TextInput
+              ref={apelidoRef}
+              label="Apelido"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              placeholder="Ex: Carro do trabalho"
+              returnKeyType="next"
+              onSubmitEditing={() => odometroRef.current?.focus()}
+            />
+          )}
+        />
+
+        <View className="mb-4">
+          <Text className="mb-1 text-sm font-medium text-brand-900">
+            Tipo
+          </Text>
+          <View className="flex-row gap-3">
+            {TIPOS_VEICULO.map((option) => (
+              <Pressable
+                key={option}
+                onPress={() => setValue("tipoVeiculo", option)}
+                className={clsx("flex-1 items-center rounded-xl border py-3", {
+                  "border-accent-500 bg-accent-50": tipoVeiculo === option,
+                  "border-brand-200 bg-white": tipoVeiculo !== option,
+                })}
+              >
+                <Text
+                  className={clsx("font-semibold", {
+                    "text-accent-600": tipoVeiculo === option,
+                    "text-brand-500": tipoVeiculo !== option,
+                  })}
+                >
+                  {option}
+                </Text>
+              </Pressable>
+            ))}
           </View>
+        </View>
 
-          <View className="rounded-2xl bg-white p-6 shadow-sm">
-            <Controller
-              control={control}
-              name="placa"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  label="Placa"
-                  value={field.value}
-                  onChangeText={(value) =>
-                    field.onChange(value.toUpperCase())
-                  }
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  autoCapitalize="characters"
-                  maxLength={PLACA_LENGTH}
-                  placeholder="ABC1D23"
-                  returnKeyType="next"
-                  onSubmitEditing={() => apelidoRef.current?.focus()}
-                />
-              )}
+        <Controller
+          control={control}
+          name="odometro"
+          render={({ field, fieldState }) => (
+            <TextInput
+              ref={odometroRef}
+              label="Odômetro (km)"
+              value={field.value ?? ""}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              keyboardType="numeric"
+              placeholder="Opcional"
+              returnKeyType="next"
+              onSubmitEditing={() => diasNotificacaoOdometroRef.current?.focus()}
             />
+          )}
+        />
 
-            <Controller
-              control={control}
-              name="apelido"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  ref={apelidoRef}
-                  label="Apelido"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  placeholder="Ex: Carro do trabalho"
-                  returnKeyType="next"
-                  onSubmitEditing={() => odometroRef.current?.focus()}
-                />
-              )}
+        <Controller
+          control={control}
+          name="diasNotificacaoOdometro"
+          render={({ field, fieldState }) => (
+            <TextInput
+              ref={diasNotificacaoOdometroRef}
+              label="Alertar odômetro desatualizado após (dias)"
+              value={field.value ?? ""}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              keyboardType="numeric"
+              placeholder="30"
+              returnKeyType="done"
+              onSubmitEditing={handleSubmit(onSubmit)}
             />
+          )}
+        />
 
-            <View className="mb-4">
-              <Text className="mb-1 text-sm font-medium text-brand-900">
-                Tipo
-              </Text>
-              <View className="flex-row gap-3">
-                {TIPOS_VEICULO.map((option) => (
-                  <Pressable
-                    key={option}
-                    onPress={() => setValue("tipoVeiculo", option)}
-                    className={clsx("flex-1 items-center rounded-xl border py-3", {
-                      "border-accent-500 bg-accent-50": tipoVeiculo === option,
-                      "border-brand-200 bg-white": tipoVeiculo !== option,
-                    })}
-                  >
-                    <Text
-                      className={clsx("font-semibold", {
-                        "text-accent-600": tipoVeiculo === option,
-                        "text-brand-500": tipoVeiculo !== option,
-                      })}
-                    >
-                      {option}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
+        <Button
+          label={isEditing ? "Salvar alterações" : "Cadastrar veículo"}
+          onPress={handleSubmit(onSubmit)}
+          loading={isCreating || isUpdating}
+        />
+      </View>
 
-            <Controller
-              control={control}
-              name="odometro"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  ref={odometroRef}
-                  label="Odômetro (km)"
-                  value={field.value ?? ""}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  keyboardType="numeric"
-                  placeholder="Opcional"
-                  returnKeyType="next"
-                  onSubmitEditing={() =>
-                    diasNotificacaoOdometroRef.current?.focus()
-                  }
-                />
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="diasNotificacaoOdometro"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  ref={diasNotificacaoOdometroRef}
-                  label="Alertar odômetro desatualizado após (dias)"
-                  value={field.value ?? ""}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  keyboardType="numeric"
-                  placeholder="30"
-                  returnKeyType="done"
-                  onSubmitEditing={handleSubmit(onSubmit)}
-                />
-              )}
-            />
-
-            <Button
-              label={isEditing ? "Salvar alterações" : "Cadastrar veículo"}
-              onPress={handleSubmit(onSubmit)}
-              loading={isCreating || isUpdating}
-            />
-          </View>
-
-          <Button label="Cancelar" onPress={goBack} variant="ghost" />
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      <Button label="Cancelar" onPress={goBack} variant="ghost" />
+    </KeyboardAvoidingFormScreen>
   );
 }

@@ -4,9 +4,6 @@ import { useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   Text,
   TextInput as TextInputNative,
   View,
@@ -16,6 +13,7 @@ import { z } from "zod";
 
 import { Button } from "@/components/Button";
 import { DateField } from "@/components/DateField";
+import { KeyboardAvoidingFormScreen } from "@/components/KeyboardAvoidingFormScreen";
 import { TextInput } from "@/components/TextInput";
 import { useAppGoTo } from "@/hooks/useAppGoTo";
 import { toDateInput, todayDateInput, zDateBR } from "@/libs/date";
@@ -180,188 +178,175 @@ export function ManutencaoFormScreen() {
   }
 
   return (
-    <SafeAreaView
-      edges={["top", "left", "right"]}
-      className="flex-1 bg-brand-50"
-    >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        className="flex-1"
-      >
-        <ScrollView
-          contentContainerClassName="flex-1 justify-center px-6"
-          keyboardShouldPersistTaps="handled"
-        >
-          <View className="mb-6 items-center">
-            <Text className="text-3xl font-bold text-brand-900">
-              {isEditing ? "Editar manutenção" : "Nova manutenção"}
-            </Text>
-            {veiculo && (
-              <Text className="mt-1 text-base text-brand-500">
-                {veiculo.apelido} · {veiculo.placa}
-              </Text>
-            )}
-          </View>
+    <KeyboardAvoidingFormScreen edges={["top", "left", "right"]}>
+      <View className="mb-6 items-center">
+        <Text className="text-3xl font-bold text-brand-900">
+          {isEditing ? "Editar manutenção" : "Nova manutenção"}
+        </Text>
+        {veiculo && (
+          <Text className="mt-1 text-base text-brand-500">
+            {veiculo.apelido} · {veiculo.placa}
+          </Text>
+        )}
+      </View>
 
-          <View className="rounded-2xl bg-white p-6 shadow-sm">
-            <Controller
-              control={control}
-              name="nome"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  label="Nome"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  placeholder="Ex: Troca de óleo"
-                  autoFocus
-                  returnKeyType="next"
-                  onSubmitEditing={() => dataRef.current?.focus()}
-                />
-              )}
+      <View className="rounded-2xl bg-white p-6 shadow-sm">
+        <Controller
+          control={control}
+          name="nome"
+          render={({ field, fieldState }) => (
+            <TextInput
+              label="Nome"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              placeholder="Ex: Troca de óleo"
+              autoFocus
+              returnKeyType="next"
+              onSubmitEditing={() => dataRef.current?.focus()}
             />
+          )}
+        />
 
-            <Controller
-              control={control}
-              name="data"
-              render={({ field, fieldState }) => (
-                <DateField
-                  ref={dataRef}
-                  label="Data"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  returnKeyType="next"
-                  onSubmitEditing={() => odometroRef.current?.focus()}
-                />
-              )}
+        <Controller
+          control={control}
+          name="data"
+          render={({ field, fieldState }) => (
+            <DateField
+              ref={dataRef}
+              label="Data"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              returnKeyType="next"
+              onSubmitEditing={() => odometroRef.current?.focus()}
             />
+          )}
+        />
 
-            <Controller
-              control={control}
-              name="odometro"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  ref={odometroRef}
-                  label="Odômetro (km)"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  keyboardType="numeric"
-                  placeholder="Ex: 12345"
-                  returnKeyType="next"
-                  onSubmitEditing={() => odometroVencimentoRef.current?.focus()}
-                />
-              )}
+        <Controller
+          control={control}
+          name="odometro"
+          render={({ field, fieldState }) => (
+            <TextInput
+              ref={odometroRef}
+              label="Odômetro (km)"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              keyboardType="numeric"
+              placeholder="Ex: 12345"
+              returnKeyType="next"
+              onSubmitEditing={() => odometroVencimentoRef.current?.focus()}
             />
+          )}
+        />
 
-            <Controller
-              control={control}
-              name="odometroVencimento"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  ref={odometroVencimentoRef}
-                  label="Odômetro do próximo vencimento"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  keyboardType="numeric"
-                  placeholder="Opcional"
-                  returnKeyType="next"
-                  onSubmitEditing={() => dataVencimentoRef.current?.focus()}
-                />
-              )}
+        <Controller
+          control={control}
+          name="odometroVencimento"
+          render={({ field, fieldState }) => (
+            <TextInput
+              ref={odometroVencimentoRef}
+              label="Odômetro do próximo vencimento"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              keyboardType="numeric"
+              placeholder="Opcional"
+              returnKeyType="next"
+              onSubmitEditing={() => dataVencimentoRef.current?.focus()}
             />
+          )}
+        />
 
-            <Controller
-              control={control}
-              name="dataVencimento"
-              render={({ field, fieldState }) => (
-                <DateField
-                  ref={dataVencimentoRef}
-                  label="Data do próximo vencimento"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  placeholder="Opcional (DD/MM/AAAA)"
-                  returnKeyType="next"
-                  onSubmitEditing={() => valorRef.current?.focus()}
-                />
-              )}
+        <Controller
+          control={control}
+          name="dataVencimento"
+          render={({ field, fieldState }) => (
+            <DateField
+              ref={dataVencimentoRef}
+              label="Data do próximo vencimento"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              placeholder="Opcional (DD/MM/AAAA)"
+              returnKeyType="next"
+              onSubmitEditing={() => valorRef.current?.focus()}
             />
+          )}
+        />
 
-            <Controller
-              control={control}
-              name="valor"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  ref={valorRef}
-                  label="Valor (R$)"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  keyboardType="numeric"
-                  placeholder="Opcional"
-                  returnKeyType="next"
-                  onSubmitEditing={() => descricaoRef.current?.focus()}
-                />
-              )}
+        <Controller
+          control={control}
+          name="valor"
+          render={({ field, fieldState }) => (
+            <TextInput
+              ref={valorRef}
+              label="Valor (R$)"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              keyboardType="numeric"
+              placeholder="Opcional"
+              returnKeyType="next"
+              onSubmitEditing={() => descricaoRef.current?.focus()}
             />
+          )}
+        />
 
-            <Controller
-              control={control}
-              name="descricao"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  ref={descricaoRef}
-                  label="Descrição"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  placeholder="Opcional · detalhes sobre a manutenção"
-                  multiline
-                  numberOfLines={4}
-                />
-              )}
+        <Controller
+          control={control}
+          name="descricao"
+          render={({ field, fieldState }) => (
+            <TextInput
+              ref={descricaoRef}
+              label="Descrição"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              placeholder="Opcional · detalhes sobre a manutenção"
+              multiline
+              numberOfLines={4}
             />
+          )}
+        />
 
-            {isEditing && (
-              <Controller
-                control={control}
-                name="dataConclusao"
-                render={({ field, fieldState }) => (
-                  <DateField
-                    ref={dataConclusaoRef}
-                    label="Data de conclusão"
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    onBlur={field.onBlur}
-                    error={fieldState.error?.message}
-                    placeholder="Opcional (DD/MM/AAAA) · preencha para concluir"
-                    returnKeyType="done"
-                    onSubmitEditing={handleSubmit(onSubmit)}
-                  />
-                )}
+        {isEditing && (
+          <Controller
+            control={control}
+            name="dataConclusao"
+            render={({ field, fieldState }) => (
+              <DateField
+                ref={dataConclusaoRef}
+                label="Data de conclusão"
+                value={field.value}
+                onChangeText={field.onChange}
+                onBlur={field.onBlur}
+                error={fieldState.error?.message}
+                placeholder="Opcional (DD/MM/AAAA) · preencha para concluir"
+                returnKeyType="done"
+                onSubmitEditing={handleSubmit(onSubmit)}
               />
             )}
+          />
+        )}
 
-            <Button
-              label={isEditing ? "Salvar alterações" : "Cadastrar manutenção"}
-              onPress={handleSubmit(onSubmit)}
-              loading={isCreating || isUpdating}
-            />
-          </View>
+        <Button
+          label={isEditing ? "Salvar alterações" : "Cadastrar manutenção"}
+          onPress={handleSubmit(onSubmit)}
+          loading={isCreating || isUpdating}
+        />
+      </View>
 
-          <Button label="Cancelar" onPress={goBack} variant="ghost" />
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      <Button label="Cancelar" onPress={goBack} variant="ghost" />
+    </KeyboardAvoidingFormScreen>
   );
 }

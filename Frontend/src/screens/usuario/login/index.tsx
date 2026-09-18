@@ -1,14 +1,7 @@
 import { useRef } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Text,
-  TextInput as TextInputNative,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Text, TextInput as TextInputNative, View } from "react-native";
 import { Button } from "@/components/Button";
+import { KeyboardAvoidingFormScreen } from "@/components/KeyboardAvoidingFormScreen";
 import { TextInput } from "@/components/TextInput";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,76 +35,64 @@ export function LoginScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-brand-50">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        className="flex-1"
-      >
-        <ScrollView
-          contentContainerClassName="flex-1 justify-center px-6"
-          keyboardShouldPersistTaps="handled"
-        >
-          <View className="mb-10 items-center">
-            <Text className="text-4xl font-bold text-brand-900">Micar</Text>
-          </View>
+    <KeyboardAvoidingFormScreen>
+      <View className="mb-10 items-center">
+        <Text className="text-4xl font-bold text-brand-900">Micar</Text>
+      </View>
 
-          <View className="rounded-2xl bg-white p-6 shadow-sm">
-            <Text className="mb-4 text-xl font-bold text-brand-900">
-              Entrar
-            </Text>
+      <View className="rounded-2xl bg-white p-6 shadow-sm">
+        <Text className="mb-4 text-xl font-bold text-brand-900">Entrar</Text>
 
-            <Controller
-              control={control}
-              name="email"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  label="Email"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                  placeholder="email@email.com"
-                  returnKeyType="next"
-                  onSubmitEditing={() => senhaRef.current?.focus()}
-                />
-              )}
+        <Controller
+          control={control}
+          name="email"
+          render={({ field, fieldState }) => (
+            <TextInput
+              label="Email"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              placeholder="email@email.com"
+              returnKeyType="next"
+              onSubmitEditing={() => senhaRef.current?.focus()}
             />
+          )}
+        />
 
-            <Controller
-              control={control}
-              name="senha"
-              render={({ field, fieldState }) => (
-                <TextInput
-                  ref={senhaRef}
-                  label="Senha"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  error={fieldState.error?.message}
-                  isPassword
-                  placeholder="Sua senha"
-                  returnKeyType="done"
-                  onSubmitEditing={handleSubmit(onSubmit)}
-                />
-              )}
+        <Controller
+          control={control}
+          name="senha"
+          render={({ field, fieldState }) => (
+            <TextInput
+              ref={senhaRef}
+              label="Senha"
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              error={fieldState.error?.message}
+              isPassword
+              placeholder="Sua senha"
+              returnKeyType="done"
+              onSubmitEditing={handleSubmit(onSubmit)}
             />
+          )}
+        />
 
-            <Button
-              label="Entrar"
-              onPress={handleSubmit(onSubmit)}
-              loading={isPending}
-            />
-          </View>
+        <Button
+          label="Entrar"
+          onPress={handleSubmit(onSubmit)}
+          loading={isPending}
+        />
+      </View>
 
-          <Button
-            label="Não tem uma conta? Cadastre-se"
-            onPress={goToCadastro}
-            variant="ghost"
-          />
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      <Button
+        label="Não tem uma conta? Cadastre-se"
+        onPress={goToCadastro}
+        variant="ghost"
+      />
+    </KeyboardAvoidingFormScreen>
   );
 }

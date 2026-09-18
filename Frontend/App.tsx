@@ -1,3 +1,4 @@
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { RootNavigator } from "./src/navigation/RootNavigator";
@@ -7,14 +8,16 @@ import { SelectedVeiculoProvider } from "./src/providers/SelectedVeiculoProvider
 
 export function App() {
   return (
-    <SafeAreaProvider>
-      <QueryClientProvider>
-        <AuthProvider>
-          <SelectedVeiculoProvider>
-            <RootNavigator />
-          </SelectedVeiculoProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </SafeAreaProvider>
+    <KeyboardProvider>
+      <SafeAreaProvider>
+        <QueryClientProvider>
+          <AuthProvider>
+            <SelectedVeiculoProvider>
+              <RootNavigator />
+            </SelectedVeiculoProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </SafeAreaProvider>
+    </KeyboardProvider>
   );
 }
