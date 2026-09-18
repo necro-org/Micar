@@ -31,7 +31,7 @@ function formatOdometroParte(pendencia: ManutencaoPendenciaResponse) {
     return `${Math.abs(pendencia.kmRestantes)} km além do limite (${pendencia.odometroVencimento} km)`;
   }
 
-  return `Faltam ${pendencia.kmRestantes} km (limite: ${pendencia.odometroVencimento} km)`;
+  return `Faltam ${pendencia.kmRestantes} km (${pendencia.odometroVencimento} km)`;
 }
 
 function buildDetalhe(pendencia: ManutencaoPendenciaResponse) {

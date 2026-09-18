@@ -56,6 +56,9 @@ public class Manutencao : Entity
 
     public int? CalcularDiasRestantes(DateOnly hoje)
     {
+        if (DataConclusao is not null)
+            return null;
+
         return DataVencimento is not null
             ? DataVencimento.Value.DayNumber - hoje.DayNumber
             : null;
@@ -63,6 +66,9 @@ public class Manutencao : Entity
 
     public int? CalcularKmRestantes(int? odometroAtual)
     {
+        if (DataConclusao is not null)
+            return null;
+
         return OdometroVencimento is not null && odometroAtual is not null
             ? OdometroVencimento.Value - odometroAtual.Value
             : null;
