@@ -1,3 +1,4 @@
+using Application.Manutencoes.Concluir;
 using Application.Manutencoes.Create;
 using Application.Manutencoes.Delete;
 using Application.Manutencoes.GetAll;
@@ -37,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<CreateManutencaoService>();
         services.AddScoped<UpdateManutencaoService>();
         services.AddScoped<DeleteManutencaoService>();
+        services.AddScoped<ConcluirManutencaoService>();
         services.AddScoped<GetManutencaoByIdService>();
         services.AddScoped<GetAllManutencoesService>();
         services.AddScoped<GetStatusManutencoesVeiculoService>();

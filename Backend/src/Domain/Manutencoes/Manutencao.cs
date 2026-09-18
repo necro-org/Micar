@@ -136,6 +136,11 @@ public class Manutencao : Entity
         RegistroOdometro.Atualizar(data, odometro);
     }
 
+    public void Concluir(DateOnly dataConclusao)
+    {
+        DataConclusao = dataConclusao;
+    }
+
     private static DateOnly ValidarData(DateOnly data)
     {
         if (data == default)

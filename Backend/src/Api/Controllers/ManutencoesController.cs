@@ -1,4 +1,5 @@
 using Application.Manutencoes.Common;
+using Application.Manutencoes.Concluir;
 using Application.Manutencoes.Create;
 using Application.Manutencoes.Delete;
 using Application.Manutencoes.GetAll;
@@ -62,6 +63,16 @@ public class ManutencoesController : ControllerBase
         CancellationToken ct)
     {
         await updateManutencaoService.ExecuteAsync(id, request, ct);
+        return NoContent();
+    }
+
+    [HttpPatch("{id:guid}/concluir")]
+    public async Task<IActionResult> Concluir(
+        ConcluirManutencaoService concluirManutencaoService,
+        Guid id,
+        CancellationToken ct)
+    {
+        await concluirManutencaoService.ExecuteAsync(id, ct);
         return NoContent();
     }
 

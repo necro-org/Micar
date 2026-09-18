@@ -22,3 +22,22 @@ export function confirmDelete({ title, message, onConfirm }: ConfirmDeleteParams
     { text: "Excluir", style: "destructive", onPress: onConfirm },
   ]);
 }
+
+interface ConfirmActionParams {
+  title: string;
+  message: string;
+  confirmText: string;
+  onConfirm: () => void;
+}
+
+export function confirmAction({
+  title,
+  message,
+  confirmText,
+  onConfirm,
+}: ConfirmActionParams) {
+  Alert.alert(title, message, [
+    { text: "Cancelar", style: "cancel" },
+    { text: confirmText, onPress: onConfirm },
+  ]);
+}

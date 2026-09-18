@@ -1,7 +1,9 @@
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 import { StatusManutencaoBadge } from "@/components/StatusManutencaoBadge";
+import { confirmAction, fireError } from "@/libs/alert";
 import { toDateInput } from "@/libs/date";
+import { useConcluirManutencao } from "@/screens/manutencao/mutations/useConcluirManutencao";
 import type { ManutencaoPendenciaResponse } from "@/screens/manutencao/api/types/ManutencaoPendenciaResponse";
 
 function formatDataParte(pendencia: ManutencaoPendenciaResponse) {
@@ -47,12 +49,24 @@ export function ManutencaoPendenciaCard({
   pendencia,
   onPress,
 }: ManutencaoPendenciaCardProps) {
+  const { mutate: concluirManutencao, isPending } = useConcluirManutencao();
+
+  function handleConcluir() {
+    confirmAction({
+      title: "Concluir manutenção",
+      message: `Confirmar a conclusão de "${pendencia.nome}" com a data de hoje?`,
+      confirmText: "Concluir",
+      onConfirm: () =>
+        concluirManutencao(pendencia.id, { onError: fireError }),
+    });
+  }
+
   return (
-    <Pressable
-      onPress={onPress}
-      className="rounded-xl bg-white p-4 shadow-sm"
-    >
-      <View className="flex-row items-start justify-between gap-3">
+    <View className="rounded-xl bg-white p-4 shadow-sm">
+      <Pressable
+        onPress={onPress}
+        className="flex-row items-start justify-between gap-3"
+      >
         <View className="flex-1">
           <Text className="text-base font-semibold text-brand-900">
             {pendencia.nome}
@@ -62,7 +76,20 @@ export function ManutencaoPendenciaCard({
           </Text>
         </View>
         <StatusManutencaoBadge status={pendencia.status} />
-      </View>
-    </Pressable>
+      </Pressable>
+      <Pressable
+        onPress={handleConcluir}
+        disabled={isPending}
+        className="mt-3 items-center rounded-lg bg-success-500 py-2"
+      >
+        {isPending ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text className="text-sm font-semibold text-white">
+            Concluir manutenção
+          </Text>
+        )}
+      </Pressable>
+    </View>
   );
 }
