@@ -1,3 +1,5 @@
+import type { NivelAlertaEnum } from "@/screens/common/api/types/NivelAlertaEnum";
+
 export interface ManutencaoResponse {
   id: string;
   data: string;
@@ -12,4 +14,6 @@ export interface ManutencaoResponse {
   diasRestantes: number | null;
   kmRestantes: number | null;
   descricao: string | null;
+  status: NivelAlertaEnum;
+  notificacaoVisualizada: boolean;
 }

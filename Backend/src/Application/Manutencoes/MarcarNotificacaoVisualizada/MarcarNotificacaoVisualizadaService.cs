@@ -3,15 +3,15 @@ using Contracts.Repositories;
 using Contracts.Repositories.Manutencoes;
 using Domain.Exceptions;
 
-namespace Application.Manutencoes.Update;
+namespace Application.Manutencoes.MarcarNotificacaoVisualizada;
 
-public class UpdateManutencaoService
+public class MarcarNotificacaoVisualizadaService
 {
     private readonly IManutencaoRepository _manutencaoRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUsuarioService _currentUsuarioService;
 
-    public UpdateManutencaoService(
+    public MarcarNotificacaoVisualizadaService(
         IManutencaoRepository manutencaoRepository,
         IUnitOfWork unitOfWork,
         ICurrentUsuarioService currentUsuarioService)
@@ -21,7 +21,7 @@ public class UpdateManutencaoService
         _currentUsuarioService = currentUsuarioService;
     }
 
-    public async Task ExecuteAsync(Guid id, UpdateManutencaoRequest request, CancellationToken ct)
+    public async Task ExecuteAsync(Guid id, CancellationToken ct)
     {
         var usuarioId = _currentUsuarioService.GetUsuarioId();
 
@@ -30,20 +30,10 @@ public class UpdateManutencaoService
         if (manutencao is null || manutencao.Veiculo?.UsuarioId != usuarioId)
             throw new NotFoundException("Manutenção não encontrada.");
 
-        manutencao.Atualizar(
-            request.Data,
-            request.Nome,
-            request.OdometroVencimento,
-            request.DataVencimento,
-            request.Valor,
-            request.Odometro,
-            request.DataConclusao,
-            request.Descricao);
-
         var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
         var odometroAtual = manutencao.Veiculo?.UltimoRegistroOdometro?.Odometro;
 
-        manutencao.DefinirNotificacaoVisualizada(request.NotificacaoVisualizada, hoje, odometroAtual);
+        manutencao.DefinirNotificacaoVisualizada(true, hoje, odometroAtual);
 
         await _unitOfWork.SaveChangesAsync(ct);
     }

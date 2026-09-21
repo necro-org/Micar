@@ -12,12 +12,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { Button } from "@/components/Button";
+import { CheckboxField } from "@/components/CheckboxField";
 import { DateField } from "@/components/DateField";
 import { KeyboardAvoidingFormScreen } from "@/components/KeyboardAvoidingFormScreen";
 import { TextInput } from "@/components/TextInput";
 import { useAppGoTo } from "@/hooks/useAppGoTo";
 import { toDateInput, todayDateInput, zDateBR } from "@/libs/date";
 import type { AppStackParamList } from "@/navigation/types";
+import { NivelAlertaEnum } from "@/screens/common/api/types/NivelAlertaEnum";
 import { useVeiculo } from "@/screens/veiculo/queries/useVeiculo";
 import { useCreateManutencao } from "../mutations/useCreateManutencao";
 import { useUpdateManutencao } from "../mutations/useUpdateManutencao";
@@ -53,6 +55,7 @@ const schema = z.object({
     .optional(),
   dataConclusao: zDateBR({ required: false }),
   descricao: z.string().trim().optional(),
+  notificacaoVisualizada: z.boolean().default(false),
 });
 
 type ManutencaoFormInput = z.input<typeof schema>;
@@ -85,6 +88,7 @@ export function ManutencaoFormScreen() {
         valor: "",
         dataConclusao: "",
         descricao: "",
+        notificacaoVisualizada: false,
       },
     });
 
@@ -116,6 +120,7 @@ export function ManutencaoFormScreen() {
           ? toDateInput(manutencao.dataConclusao)
           : "",
         descricao: manutencao.descricao ?? "",
+        notificacaoVisualizada: manutencao.notificacaoVisualizada,
       });
     }
   }, [manutencao, reset]);
@@ -146,6 +151,7 @@ export function ManutencaoFormScreen() {
           valor: values.valor ? Number(values.valor) : undefined,
           dataConclusao: values.dataConclusao,
           descricao: values.descricao || undefined,
+          notificacaoVisualizada: values.notificacaoVisualizada,
         },
       });
     } else {
@@ -334,6 +340,24 @@ export function ManutencaoFormScreen() {
                 placeholder="Opcional (DD/MM/AAAA) · preencha para concluir"
                 returnKeyType="done"
                 onSubmitEditing={handleSubmit(onSubmit)}
+              />
+            )}
+          />
+        )}
+
+        {isEditing && manutencao && manutencao.status !== NivelAlertaEnum.Normal && (
+          <Controller
+            control={control}
+            name="notificacaoVisualizada"
+            render={({ field }) => (
+              <CheckboxField
+                label={
+                  manutencao.status === NivelAlertaEnum.Critico
+                    ? "Notificação de manutenção vencida visualizada"
+                    : "Notificação de manutenção próxima do vencimento visualizada"
+                }
+                value={field.value ?? false}
+                onChange={field.onChange}
               />
             )}
           />

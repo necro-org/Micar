@@ -8,5 +8,6 @@ public interface IPushNotificationSender
         IEnumerable<string> tokens,
         string titulo,
         string corpo,
+        IReadOnlyDictionary<string, string>? data,
         CancellationToken ct);
 }

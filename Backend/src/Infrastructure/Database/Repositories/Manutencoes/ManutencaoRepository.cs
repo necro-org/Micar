@@ -37,6 +37,16 @@ public class ManutencaoRepository : IManutencaoRepository
             .ToListAsync(ct);
     }
 
+    public async Task<List<Manutencao>> GetAllPendentesAsync(CancellationToken ct)
+    {
+        return await _dbContext.Manutencoes
+            .Include(m => m.Veiculo)
+                .ThenInclude(v => v!.RegistrosOdometro.OrderByDescending(r => r.Data).ThenByDescending(r => r.Odometro).Take(1))
+            .Include(m => m.RegistroOdometro)
+            .Where(m => m.DataConclusao == null)
+            .ToListAsync(ct);
+    }
+
     public void Remove(Manutencao manutencao)
     {
         _dbContext.Manutencoes.Remove(manutencao);

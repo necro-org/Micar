@@ -1,3 +1,4 @@
+using Api.Filters;
 using Application.Manutencoes.Common;
 using Application.Manutencoes.Concluir;
 using Application.Manutencoes.Create;
@@ -5,7 +6,10 @@ using Application.Manutencoes.Delete;
 using Application.Manutencoes.GetAll;
 using Application.Manutencoes.GetById;
 using Application.Manutencoes.GetStatus;
+using Application.Manutencoes.MarcarNotificacaoVisualizada;
+using Application.Manutencoes.NotificarPendentes;
 using Application.Manutencoes.Update;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -76,6 +80,16 @@ public class ManutencoesController : ControllerBase
         return NoContent();
     }
 
+    [HttpPatch("{id:guid}/notificacao-visualizada")]
+    public async Task<IActionResult> MarcarNotificacaoVisualizada(
+        MarcarNotificacaoVisualizadaService marcarNotificacaoVisualizadaService,
+        Guid id,
+        CancellationToken ct)
+    {
+        await marcarNotificacaoVisualizadaService.ExecuteAsync(id, ct);
+        return NoContent();
+    }
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(
         DeleteManutencaoService deleteManutencaoService,
@@ -84,5 +98,16 @@ public class ManutencoesController : ControllerBase
     {
         await deleteManutencaoService.ExecuteAsync(id, ct);
         return NoContent();
+    }
+
+    [HttpPost("notificar-pendentes")]
+    [AllowAnonymous]
+    [ServiceFilter(typeof(SchedulerApiKeyFilter))]
+    public async Task<ActionResult<NotificarManutencoesPendentesResponse>> NotificarPendentes(
+        NotificarManutencoesPendentesService notificarManutencoesPendentesService,
+        CancellationToken ct)
+    {
+        var resultado = await notificarManutencoesPendentesService.ExecuteAsync(ct);
+        return Ok(resultado);
     }
 }

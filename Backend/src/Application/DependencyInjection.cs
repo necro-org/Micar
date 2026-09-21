@@ -4,6 +4,8 @@ using Application.Manutencoes.Delete;
 using Application.Manutencoes.GetAll;
 using Application.Manutencoes.GetById;
 using Application.Manutencoes.GetStatus;
+using Application.Manutencoes.MarcarNotificacaoVisualizada;
+using Application.Manutencoes.NotificarPendentes;
 using Application.Manutencoes.Update;
 using Application.PushNotifications.Enviar;
 using Application.PushTokens.Registrar;
@@ -42,6 +44,8 @@ public static class DependencyInjection
         services.AddScoped<GetManutencaoByIdService>();
         services.AddScoped<GetAllManutencoesService>();
         services.AddScoped<GetStatusManutencoesVeiculoService>();
+        services.AddScoped<MarcarNotificacaoVisualizadaService>();
+        services.AddScoped<NotificarManutencoesPendentesService>();
         services.AddScoped<RegistrarPushTokenService>();
         services.AddScoped<RemoverPushTokenService>();
         services.AddScoped<EnviarNotificacaoService>();

@@ -1,7 +1,8 @@
-using System.Net.Http.Json;
-using System.Text.Json;
 using Contracts.PushNotifications;
 using Domain.PushNotifications;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Infrastructure.PushNotifications;
 
@@ -15,6 +16,11 @@ public class ExpoPushNotificationSender : IPushNotificationSender
         PropertyNameCaseInsensitive = true,
     };
 
+    private static readonly JsonSerializerOptions SendJsonOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    };
+
     private readonly HttpClient _httpClient;
 
     public ExpoPushNotificationSender(HttpClient httpClient)
@@ -26,6 +32,7 @@ public class ExpoPushNotificationSender : IPushNotificationSender
         IEnumerable<string> tokens,
         string titulo,
         string corpo,
+        IReadOnlyDictionary<string, string>? data,
         CancellationToken ct)
     {
         var tokensList = tokens.ToList();
@@ -38,13 +45,14 @@ public class ExpoPushNotificationSender : IPushNotificationSender
             to = token,
             title = titulo,
             body = corpo,
+            data,
         });
 
         HttpResponseMessage response;
 
         try
         {
-            response = await _httpClient.PostAsJsonAsync(ExpoPushUrl, mensagens, ct);
+            response = await _httpClient.PostAsJsonAsync(ExpoPushUrl, mensagens, SendJsonOptions, ct);
         }
         catch (HttpRequestException)
         {

@@ -7,4 +7,5 @@ export interface UpdateManutencaoRequest {
   valor?: number;
   dataConclusao?: string;
   descricao?: string;
+  notificacaoVisualizada: boolean;
 }

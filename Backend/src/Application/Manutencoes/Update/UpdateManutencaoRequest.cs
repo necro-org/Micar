@@ -10,4 +10,5 @@ public class UpdateManutencaoRequest
     public decimal? Valor { get; set; }
     public DateOnly? DataConclusao { get; set; }
     public string? Descricao { get; set; }
+    public bool NotificacaoVisualizada { get; set; }
 }

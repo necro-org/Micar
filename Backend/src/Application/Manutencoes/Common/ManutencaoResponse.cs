@@ -1,3 +1,4 @@
+using Domain.Common;
 using Domain.Manutencoes;
 
 namespace Application.Manutencoes.Common;
@@ -17,6 +18,8 @@ public class ManutencaoResponse
     public int? DiasRestantes { get; set; }
     public int? KmRestantes { get; set; }
     public string? Descricao { get; set; }
+    public NivelAlertaEnum Status { get; set; }
+    public bool NotificacaoVisualizada { get; set; }
 
     public ManutencaoResponse(Manutencao manutencao, DateOnly hoje, int? odometroAtual)
     {
@@ -33,5 +36,12 @@ public class ManutencaoResponse
         DiasRestantes = manutencao.CalcularDiasRestantes(hoje);
         KmRestantes = manutencao.CalcularKmRestantes(odometroAtual);
         Descricao = manutencao.Descricao;
+        Status = manutencao.CalcularStatus(hoje, odometroAtual);
+        NotificacaoVisualizada = Status switch
+        {
+            NivelAlertaEnum.Critico => manutencao.DataVisualizacaoNotificacaoVencida is not null,
+            NivelAlertaEnum.Atencao => manutencao.DataVisualizacaoNotificacaoAVencer is not null,
+            _ => false,
+        };
     }
 }

@@ -20,7 +20,12 @@ public class EnviarNotificacaoService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<EnviarNotificacaoResultado> ExecuteAsync(Guid usuarioId, string titulo, string corpo, CancellationToken ct)
+    public async Task<EnviarNotificacaoResultado> ExecuteAsync(
+        Guid usuarioId,
+        string titulo,
+        string corpo,
+        CancellationToken ct,
+        IReadOnlyDictionary<string, string>? data = null)
     {
         var pushTokens = await _pushTokenRepository.GetAtivosByUsuarioIdAsync(usuarioId, ct);
 
@@ -31,6 +36,7 @@ public class EnviarNotificacaoService
             pushTokens.Select(t => t.Token),
             titulo,
             corpo,
+            data,
             ct);
 
         var tokensInvalidos = resultados

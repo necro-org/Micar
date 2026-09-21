@@ -6,6 +6,15 @@ import { Platform } from "react-native";
 
 import { useRegistrarPushToken } from "@/features/pushNotifications/mutations/useRegistrarPushToken";
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
 export function usePushNotificationRegistration() {
   const { mutate: registrarPushToken } = useRegistrarPushToken();
 

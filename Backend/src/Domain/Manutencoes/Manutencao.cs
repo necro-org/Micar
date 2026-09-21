@@ -17,6 +17,8 @@ public class Manutencao : Entity
     public decimal? Valor { get; private set; }
     public DateOnly? DataConclusao { get; private set; }
     public string? Descricao { get; private set; }
+    public DateOnly? DataVisualizacaoNotificacaoAVencer { get; private set; }
+    public DateOnly? DataVisualizacaoNotificacaoVencida { get; private set; }
     private const double MargemProporcao = 0.15;
     private const int MargemMinimaDias = 7;
     private const int MargemMaximaDias = 45;
@@ -145,6 +147,16 @@ public class Manutencao : Entity
     public void Concluir(DateOnly dataConclusao)
     {
         DataConclusao = dataConclusao;
+    }
+
+    public void DefinirNotificacaoVisualizada(bool visualizado, DateOnly hoje, int? odometroAtual)
+    {
+        var status = CalcularStatus(hoje, odometroAtual);
+
+        if (status == NivelAlertaEnum.Critico)
+            DataVisualizacaoNotificacaoVencida = visualizado ? hoje : null;
+        else if (status == NivelAlertaEnum.Atencao)
+            DataVisualizacaoNotificacaoAVencer = visualizado ? hoje : null;
     }
 
     private static DateOnly ValidarData(DateOnly data)
