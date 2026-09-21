@@ -33,11 +33,18 @@ public class NotificarOdometrosDesatualizadosService
         {
             var dias = veiculo.UltimoRegistroOdometro!.CalcularDiasSemAtualizacao(hoje);
 
+            var data = new Dictionary<string, string>
+            {
+                ["tipo"] = "odometro",
+                ["veiculoId"] = veiculo.Id.ToString(),
+            };
+
             var resultado = await _enviarNotificacaoService.ExecuteAsync(
                 veiculo.UsuarioId,
                 "Odômetro desatualizado",
                 $"O odômetro de {veiculo.Apelido} está há {dias} dias sem atualização. Abra o app para atualizar.",
-                ct);
+                ct,
+                data);
 
             if (!resultado.Sucesso)
                 falhas.Add(new NotificacaoFalhaResponse(veiculo.UsuarioId, resultado.Erro!));
