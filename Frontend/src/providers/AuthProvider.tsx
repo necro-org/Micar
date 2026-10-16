@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 import { api, setSessionExpiredHandler } from "@/libs/api";
 import { isTokenExpired } from "@/libs/jwt";
+import { syncCarSession } from "../../modules/micar-car";
 
 const TOKEN_KEY = "token";
 
@@ -36,6 +37,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       delete api.defaults.headers.common["Authorization"];
     }
   }, [token]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      syncCarSession(token);
+    }
+  }, [token, isLoading]);
 
   function setToken(newToken: string | null) {
     setToken_(newToken);
